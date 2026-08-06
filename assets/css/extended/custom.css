@@ -14,3 +14,22 @@
 .post-entry{
     margin-bottom: 30px;
 }
+
+main div.post-content p{
+    font-size: 12pt;
+    text-align: justify;
+}
+
+main div.post-content a:hover{
+    color: #007acc;
+}
+
+main div.post-content img{
+    max-width: 60%;
+    margin: 15px auto auto auto;
+}
+
+main div.post-content figcaption{
+    text-align: justify;
+    margin-left: 175px;
+}
