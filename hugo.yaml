@@ -1,15 +1,20 @@
 baseURL: https://darylbdr.github.io/
 locale: en-us
-title: Daryl'Log
+title: Boul'Og
 theme: ["PaperMod"]
 params:
+  assets:
+    favicon: "/images/favicon.ico"
+    apple_touch_icon: "/images/apple-touch-icon.png"
+    favicon96x96: "/images/favicon-96x96.png"
+  author: "Daryl BOULOU"
   analytics:
     google:
       SiteVerificationTag: "OxaIYhNmntXgWxrH6losR-iAA2O8-lW5KydCdcAgsyY"
   homeInfoParams:
-    title: "Welcome to Daryl'Log 👋"
+    title: "Welcome to Boul'Og 👋"
     Content: |
-      Hi, this is Daryl BOULOU.
+      Hi, this is Daryl BOULOU, student in AI and Data science.
       I'm documenting my learning notes and sharing my experiences in this blog.
   socialIcons:
       - name: "github"
