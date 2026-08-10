@@ -3,6 +3,7 @@ locale: en-us
 title: Boul'Og
 theme: ["PaperMod"]
 params:
+  math: true
   assets:
     favicon: "/images/favicon.ico"
     apple_touch_icon: "/images/apple-touch-icon.png"

@@ -33,3 +33,7 @@ main div.post-content figcaption{
     text-align: justify;
     margin-left: 175px;
 }
+
+.full-width-figure img{
+    max-width: 100% !important;
+}
