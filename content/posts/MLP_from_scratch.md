@@ -3,6 +3,7 @@ title: 'MLP from scratch (WIP)'
 draft: false
 showToc: true
 math: true
+weight: 1
 ---
 
 Here I implemented a MLP from scratch where **The goal was to be able to generate fictional character names**. The full code is available in this [github repo](https://github.com/darylbdr/AI-Sandbox/blob/main/MLP/MLP_from_scratch.ipynb).
@@ -145,4 +146,3 @@ To achieve this and avoid wasting training steps fixing poor initial weights, we
     b2 = torch.zeros(vocab_size)
 ```
 # Inference
-
