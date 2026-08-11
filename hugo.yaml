@@ -2,7 +2,18 @@ baseURL: https://darylbdr.github.io/
 locale: en-us
 title: Boul'Og
 theme: ["PaperMod"]
+menu:
+  main:
+    - name: Experiences
+      url: /experiences/
+      weight: 10
+    # - name: Search
+    #   url: /Search/
+    #   weight: 20
 params:
+  mainSections:
+    - posts
+    - experiences
   math: true
   assets:
     favicon: "/images/favicon.ico"
