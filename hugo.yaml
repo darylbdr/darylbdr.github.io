@@ -10,6 +10,7 @@ menu:
     # - name: Search
     #   url: /Search/
     #   weight: 20
+enableRobotsTXT: true
 params:
   mainSections:
     - posts
