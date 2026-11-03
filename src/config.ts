@@ -38,7 +38,7 @@ export const ME = {
         resumeDoc: "resume.pdf",
     },
     aboutMe: "Hi, this is Daryl BOULOU, an engineering student in Artificial Intelligence and Data Science at CESI. " +
-        "I specialize in building end-to-end AI systems—from implementing neural networks from scratch and training computer vision pipelines (CNNs, U-Net, Attention LSTMs) " +
+        "I specialize in building end-to-end AI systems, from implementing neural networks from scratch and training computer vision pipelines (CNNs, U-Net, Attention LSTMs) " +
         "to designing grounded tool-calling agents powered by local LLMs (Ollama, Gemma 4). " +
         "I use this portfolio and blog (Boul'Og) to document my learning notes, showcase my projects, and share my professional experiences.",
 }

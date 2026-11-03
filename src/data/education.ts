@@ -11,7 +11,7 @@ interface Education {
 
 const education: Education[] = [
     {
-        title: "Engineering Degree in Computer Science — AI & Data Science",
+        title: "Engineering Degree in Computer Science | AI & Data Science",
         startDate: "2022-09-01",
         endDate: "",
         school: "CESI École d'Ingénieurs",
@@ -21,7 +21,7 @@ const education: Education[] = [
         currentUni: true,
     },
     {
-        title: "Academic Exchange Semester — AI & Cloud Computing",
+        title: "Academic Exchange Semester | AI & Cloud Computing",
         startDate: "2026-03-01",
         endDate: "2026-07-15",
         school: "Politehnica University of Timișoara (UPT)",
