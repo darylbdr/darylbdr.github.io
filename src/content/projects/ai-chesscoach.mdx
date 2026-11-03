@@ -1,0 +1,77 @@
+---
+title: "AI Chess Coach — Local LLM & Stockfish Analysis"
+summary: "Interactive chess game analysis web application combining real-time Stockfish streaming (SSE) with pedagogical explanations from a locally hosted LLM (Gemma 4 via Ollama), grounded via a blind-first agentic tool-calling architecture."
+tags:
+    - React 19
+    - TypeScript
+    - FastAPI
+    - Ollama (Gemma 4)
+    - Stockfish
+    - Docker
+startDate: 2026-10-15
+endDate: 2026-10-31
+url: "https://github.com/darylbdr/AI-Chesscoach"
+cover: "./images/ai-chesscoach/preview.png"
+ogImage: "/images/ai-chesscoach-preview.png"
+---
+
+## Overview
+
+**AI Chess Coach** is an interactive chess game analysis web application that combines the tactical precision of **Stockfish** with the pedagogical explanations of a **locally hosted Large Language Model (`gemma4:e4b` via Ollama)**.
+
+Instead of relying on cloud APIs or letting a language model guess chess moves (which typically leads to severe hallucinations), this project uses an **agentic tool-calling architecture** that grounds every explanation in real-time board states and Stockfish evaluations.
+
+- **GitHub Repository:** [github.com/darylbdr/AI-Chesscoach](https://github.com/darylbdr/AI-Chesscoach)
+
+---
+
+## ✨ Key Features
+
+- **PGN Game Import & Replay:** Paste any PGN game to step through moves using on-screen controls or keyboard arrow keys (`←`, `→`, `↑`, `↓`), with automatic move-list scrolling and board orientation flipping.
+- **Real-Time Stockfish Streaming (SSE):** Streams engine evaluations and best-move arrows across increasing search depths (`depth 12` to `26`) using Server-Sent Events, paired with a dynamic Lichess/Chess.com-style **Evaluation Bar**.
+- **100% Local AI Chess Coach:** Ask natural-language questions about any position or blunder (e.g., *"Why is c3b5 a blunder and how can Black punish it?"*) and get concise, human-friendly chess explanations powered locally by **Gemma 4 (`gemma4:e4b`)**.
+
+---
+
+## 🧠 Preventing LLM Hallucinations (Blind-First Tool Calling)
+
+Standard LLMs struggle with chess: they lose track of piece placements in FEN strings, invent illegal moves, or use vague literary filler to hide calculation errors.
+
+To solve this while running a lightweight local model (**`gemma4:e4b`** via **Ollama** with reasoning/thinking enabled), the backend (`backend-coach/llm.py` & `backend-coach/llm_tools.py`) enforces a strict **Tool-Calling Loop**:
+
+1. **Blind-First Architecture:**
+   The raw FEN is **never** given directly to the LLM in the user prompt. To know what is on the board, the model is forced to call grounding tools first.
+2. **Dedicated Grounding Tools (`llm_tools.py`):**
+   - **`get_board_representation()`**: Parses the current FEN into an explicit dictionary of squares and piece names (`white_pawns`, `black_pawns`, `other_white_pieces`, `other_black_pieces`, and `side_to_move`) so the LLM never misreads a FEN string.
+   - **`get_stockfish_best_move()`**: Queries the Stockfish engine for the best move in coordinate notation and its objective evaluation.
+   - **`play_move(move)`**: Plays a move on the analysis board to explore multi-move tactical continuations (2–3+ plies). Inputs are automatically sanitized (`clean_uci_move`) to prevent small-model formatting errors (such as passing `"Nd4b5"` instead of `"d4b5"`). It explicitly computes and returns:
+     - `moving_piece` & `captured_piece` (including *en passant*), so the LLM does not have to mentally diff two 32-piece JSON arrays to know what was captured.
+     - `evaluation_before` & `evaluation_after`.
+     - `opponent_best_reply` from Stockfish, allowing the agent to immediately follow the opponent's refutation.
+   - **`try_move(move_try)`**: Simulates a single candidate move and returns the evaluation delta and capture info while automatically resetting the board back to the original position.
+3. **Pedagogical Translation Prompt (`CHESS_PROMPT`):**
+   The system prompt forbids raw engine jargon (`centipawns`, numeric scores like `+1.5`) and vague literary filler, requiring the model to translate Stockfish's findings into concrete moves, squares, captured pieces, and tactical motifs (*fork, pin, skewer, hanging piece, loss of tempo, center control*).
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+```text
+AI-ChessCoach/
+├── Dockerfile                  # Multi-stage build (React + Python + Stockfish + Ollama)
+├── start.sh                    # Container entrypoint (starts Ollama & unified FastAPI server)
+├── src/                        # React 19 + TypeScript + Vite Frontend
+│   ├── Home.tsx                # PGN import page
+│   ├── ChessPage.tsx           # Interactive board, eval bar, move history & coach chat
+│   └── App.css                 # Responsive styling & evaluation bar animations
+└── backend-coach/              # Python FastAPI Backend
+    ├── server_prod.py          # Unified server (Frontend + Stockfish SSE + LLM) for Docker
+    ├── main.py                 # Dev server (Port 8000): Stockfish SSE stream (/analyze-stream)
+    ├── llm_server.py           # Dev server (Port 8001): Coach Q&A endpoint (/LLM-answer)
+    ├── llm.py                  # Ollama agent loop & CHESS_PROMPT
+    ├── llm_tools.py            # Stockfish & board inspection tools for the LLM
+    └── utils.py                # FEN piece mapping utilities
+```
+
+### Containerized All-in-One Deployment
+The repository includes a multi-stage `Dockerfile` and `start.sh` script that automatically compile the React 19 frontend, install the Linux Stockfish engine, set up Ollama, pre-pull the `gemma4:e4b` model, and serve the entire application on a single port via FastAPI (`server_prod.py`).

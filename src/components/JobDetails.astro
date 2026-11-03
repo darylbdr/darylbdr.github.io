@@ -1,0 +1,59 @@
+---
+// component imports
+import {Badge} from "./ui/badge";
+
+// library imports
+import {formatDatetime} from "../lib/utils";
+
+interface Job {
+    title: string;
+    company: string;
+    companyUrl?: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+    description?: string;
+    goals: string[];
+    currentJob: boolean;
+}
+
+const {jobData} = Astro.props;
+const {
+    title,
+    company,
+    companyUrl,
+    location,
+    startDate,
+    endDate,
+    description,
+    goals,
+    currentJob,
+} = jobData as Job;
+
+---
+
+<div class="flex flex-col gap-2">
+    <h3 class="text-xl font-bold">{title}</h3>
+    <div class="flex items-center gap-2 flex-wrap">
+        <Badge className="bg-primary-light dark:bg-primary-dark text-n900 w-fit rounded-md whitespace-nowrap">
+            {formatDatetime(startDate)} - {currentJob ? "Present" : formatDatetime(endDate)}
+        </Badge>
+        {companyUrl ? (
+            <a href={companyUrl} target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-primary-light dark:hover:text-primary-dark truncate">
+                {company}
+            </a>
+        ) : (
+            <p class="font-semibold truncate">{company}</p>
+        )}
+        <span class="text-sm font-bold">/</span>
+        <p class="truncate">{location}</p>
+    </div>
+    {description && (
+        <p class="text-sm md:text-base mt-1">{description}</p>
+    )}
+    <ul class="list-disc pl-5 space-y-1 mt-1">
+        {goals.map((goal: string) => (
+                <li>{goal}</li>
+        ))}
+    </ul>
+</div>
