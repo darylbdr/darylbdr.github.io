@@ -14,7 +14,7 @@ cover: "./images/mlp-from-scratch/cover.png"
 ogImage: "/images/mlp-cover.png"
 ---
 
-Here I implemented an MLP from scratch where **the goal was to be able to generate fictional character names**. The full code is available in this [GitHub repo](https://github.com/darylbdr/AI-Sandbox/blob/main/MLP/MLP_from_scratch.ipynb).
+Here I implemented an MLP from scratch where **the goal was to be able to generate fictional character names from a Japanese's dataset**. The full code is available in this [GitHub repo](https://github.com/darylbdr/AI-Sandbox/blob/main/MLP/MLP_from_scratch.ipynb).
 
 I followed the approach introduced in the [Bengio et al. 2003 MLP language model paper](https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf) where the MLP architecture proposed in the paper is the following:
 
@@ -30,7 +30,7 @@ It is composed of three layers:
 ## The Input Embedding Layer
 
 In Bengio et al.'s paper, the input layer receives a context window of $n$ previous tokens and maps each of them into a continuous embedding space. Before feeding sequence data into the neural network, we must preprocess the raw text so that it matches the shape and format expected by the embedding layer.
-
+Particularly in this case, I used a context window of 6 because in the dataset, the average character length of a name was `6.54`.
 ### Data Preprocessing
 
 #### 1. Building the vocabulary
@@ -249,3 +249,21 @@ To achieve this and avoid wasting training steps fixing poor initial weights, we
 w2 = torch.randn((n_hidden, vocab_size), generator=gen) * 0.01
 b2 = torch.zeros(vocab_size)
 ```
+
+# Inference
+
+I finally proceeded to sample some names from the model and got the following:
+```
+ciko paoxin
+ollio
+kou
+aist
+ouishi
+hiho
+ettaa
+iko
+hlopeman
+ana
+```
+
+I only used a dataset of 133939 examples and a model with 22K parameters so the results aren't the best, but still some examples are acceptable.

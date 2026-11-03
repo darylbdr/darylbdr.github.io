@@ -14,7 +14,7 @@ const languages: Language[] = [
     },
     {
         name: "English",
-        level: "Professional Working Proficiency",
+        level: "TOEIC: 935",
         description: "Fluent technical reading, writing, and communication",
         show: true
     }
