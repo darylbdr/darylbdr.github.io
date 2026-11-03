@@ -1,7 +1,4 @@
 ---
-// component imports
-import {Icon} from "astro-icon/components";
-
 // data imports
 import {menu} from "../data/menu";
 
@@ -14,9 +11,8 @@ const pathname = Astro.url.pathname;
 <nav class="bg-white dark:bg-n700 fixed w-full z-20 top-0 start-0 " id="menu">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <Icon name={SITE.logo} width={40} height={40}/>
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                { SITE.logoText}
+                {SITE.logoText}
             </span>
         </a>
         <div class="flex md:order-1 space-x-3 md:space-x-0 rtl:space-x-reverse">
