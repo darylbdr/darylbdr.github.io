@@ -1,10 +1,10 @@
-
 ---
 import { getCollection, render } from "astro:content";
 import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import BackBtn from "@/components/BackBtn.astro";
 import BackToTop from "../../components/BackToTop.astro";
+import { resolveCoverImage } from "../../lib/utils";
 
 export async function getStaticPaths() {
     const posts = await getCollection('projects');
@@ -16,6 +16,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { title, summary, tags, cover, ogImage, url } = post.data;
+const resolvedCover = resolveCoverImage(cover, 'projects');
 
 const { Content } = await render(post);
 
@@ -31,15 +32,15 @@ const { Content } = await render(post);
                 {tags.join(', ')}
             </p>
         </div>
-        <Image transition:name={`${post.id}-image`} class="rounded-2xl" src={cover} alt="Main project image"/>
+        <Image transition:name={`${post.id}-image`} class="rounded-2xl" src={resolvedCover} alt="Main project image"/>
         <p>
             {summary}
         </p>
-        <a href={url}>
+        <a href={url} target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-primary-light dark:hover:text-primary-dark">
             Visit the project ↗
         </a>
 
-        <article id="article" class="mt-8 prose dark:prose-invert">
+        <article id="article" class="mt-8 prose dark:prose-invert max-w-none">
             <Content/>
         </article>
         <BackToTop />
@@ -51,4 +52,3 @@ const { Content } = await render(post);
         @apply text-2xl font-bold my-4;
     }
 </style>
-

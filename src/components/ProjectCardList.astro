@@ -3,17 +3,18 @@
 import { Image } from 'astro:assets';
 
 // library imports
-import {cn} from "../lib/utils";
+import {cn, resolveCoverImage} from "../lib/utils";
 
 
 interface Props {
     title: string;
     tags: string[];
-    cover: ImageMetadata;
+    cover: ImageMetadata | string;
     id: string;
 }
 
 const { title, tags, cover, id } = Astro.props as Props;
+const resolvedCover = resolveCoverImage(cover, 'projects');
 ---
 
 <a href={`/projects/${id}`} class="project-card" aria-label={`View project "${title}"`}>
@@ -21,7 +22,7 @@ const { title, tags, cover, id } = Astro.props as Props;
         <div class="rounded-xl h-[250px] md:w-[150px] md:h-[150px] flex-none overflow-hidden">
             <Image
                     transition:name={`${id}-image`}
-                    src={cover}
+                    src={resolvedCover}
                     alt={`Cover preview of the project titled "${title}"`}
                     class="object-cover w-full h-full rounded-xl"
             />

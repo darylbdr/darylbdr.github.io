@@ -1,15 +1,17 @@
 ---
 // astro imports
 import {Image} from "astro:assets";
+import {resolveCoverImage} from "../lib/utils";
 
 const { title, tags, cover, id } = Astro.props;
+const resolvedCover = resolveCoverImage(cover, 'projects');
 ---
 <a href={`/projects/${id}`}>
     <div class="relative flex flex-col text-gray-700 bg-clip-border rounded-xl w-full">
         <div class="relative overflow-hidden rounded-xl h-52">
             <Image
                     transition:name={ `${id}-image` }
-                    src={cover}
+                    src={resolvedCover}
                     alt={"cover preview of " + title}
                     class={"object-cover w-full h-full rounded-xl"}
                     loading={'eager'}

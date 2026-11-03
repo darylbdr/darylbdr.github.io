@@ -33,7 +33,7 @@ export const ME = {
         }
     ],
     contactInfo: {
-        email: "daryl.boulou@viacesi.fr",
+        email: "bragouel@gmail.com",
         linkedin: "https://www.linkedin.com/in/daryl-boulou-77ba8b253/",
         resumeDoc: "resume.pdf",
     },
