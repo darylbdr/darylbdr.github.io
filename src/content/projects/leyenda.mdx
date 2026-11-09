@@ -1,6 +1,6 @@
 ---
 title: "Leyenda : Deep Learning Image Processing & Captioning"
-summary: "End-to-end 3-stage Deep Learning pipeline and interactive Flask web application for automated document filtering (CNN), photographic denoising (U-Net with MSE+SSIM loss), and image captioning (InceptionV3 + Bahdanau Attention + LSTM), deployed on Azure Container Apps."
+summary: "End-to-end three-stage Deep Learning pipeline and interactive Flask web application for automated document filtering via CNN, photographic denoising via U-Net with MSE and SSIM loss, and image captioning with InceptionV3, Bahdanau Attention, and LSTM, deployed on Azure Container Apps."
 tags:
     - Deep Learning
     - PyTorch & Keras 3
@@ -17,12 +17,12 @@ ogImage: "/images/leyenda-preview.png"
 
 ## 1. Context & Project Objective
 
-Developed as a Machine Learning & Deep Learning engineering project at **CESI** (for the fictional document digitization company **TouNum**), **Leyenda (Legenda)** automates the analysis and indexing of large volumes of digitized paper archives.
+Developed as a Machine Learning and Deep Learning engineering project at **CESI**, **Leyenda** automates the analysis and indexing of large volumes of digitized paper archives.
 
-Because scanned document batches contain a mix of photographs, text pages, technical schematics, sketches, and paintings, and suffer from digitization artifacts (paper grain, sensor noise, compression). we designed a **3-stage scientific Deep Learning pipeline** paired with a **real-time streaming web application**:
+Because scanned document batches contain a mix of photographs, text pages, technical schematics, sketches, and paintings, while suffering from digitization artifacts such as paper grain, sensor noise, and compression, we designed a **three-stage Deep Learning pipeline** paired with a **real-time streaming web application**:
 
-- 🌐 **Live Production Demo:** [https://leyenda.darylbdr.tech](https://leyenda.darylbdr.tech) *(hosted on Azure Container Apps & Cloudflare)*
-- 💻 **GitHub Repository:** [github.com/Williampancha/Leyenda](https://github.com/Williampancha/Leyenda)
+- **Live Production Demo:** [https://leyenda.darylbdr.tech](https://leyenda.darylbdr.tech) hosted on Azure Container Apps and Cloudflare
+- **GitHub Repository:** [github.com/Williampancha/Leyenda](https://github.com/Williampancha/Leyenda)
 
 ```text
 [Digitized Document]
@@ -32,7 +32,7 @@ Because scanned document batches contain a mix of photographs, text pages, techn
 │ Deliverable 1: Photo / Non-Photo Classification (CNN)    │
 │  → Filters out text, schematics, sketches, and paintings │
 └──────────────────────────────────────────────────────────┘
-         │ (If P(Photo) ≥ 0.2301)
+         │  If P(Photo) ≥ 0.2301
          ▼
 ┌──────────────────────────────────────────────────────────┐
 │ Deliverable 2: Photographic Denoising (U-Net MSE+SSIM)   │
@@ -51,38 +51,38 @@ Because scanned document batches contain a mix of photographs, text pages, techn
 
 ## 2. Scientific Deliverables Breakdown
 
-### Deliverable 1 : Binary Photo / Non-Photo Classification (`Livrable 1.ipynb`)
-- **Objective:** Isolate photographs from 5 document categories: `Painting`, `Photo`, `Schematics`, `Sketch`, and `Text`.
-- **Preprocessing:** Corrupted file cleanup, $128 \times 128$ RGB resizing, and reproducible **70% train / 15% validation / 15% test** split.
-- **CNN Architecture (`model_full`):** Sequential Convolutional Neural Network featuring `Rescaling(1./255)`, 3 `Conv2D` blocks (32, 64, and 128 filters of size $3 \times 3$, ReLU) with `MaxPooling2D(2, 2)`, **ElasticNet (L1/L2)** regularization on deep layers, `Dense(128, relu)`, and a 5-class softmax output.
+### Deliverable 1 : Binary Photo / Non-Photo Classification
+- **Objective:** Isolate photographs from five document categories: `Painting`, `Photo`, `Schematics`, `Sketch`, and `Text`.
+- **Preprocessing:** Corrupted file cleanup, $128 \times 128$ RGB resizing, and a reproducible 70% train, 15% validation, and 15% test split.
+- **CNN Architecture:** Sequential Convolutional Neural Network featuring input rescaling, three `Conv2D` blocks with 32, 64, and 128 filters of size $3 \times 3$ and ReLU activation followed by `MaxPooling2D`, **ElasticNet L1/L2** regularization on deep layers, a 128-unit dense layer, and a 5-class softmax output.
 - **Results & Threshold Optimization:**
   - **Multiclass Accuracy:** **90.80%** across 6,275 test images.
-  - **Binary Grouping (Photo vs. Non-Photo):** **93.04% binary accuracy** and **0.9758 ROC-AUC**.
-  - **Optimal Youden Threshold ($\theta = 0.2301$):** Maximizes $TPR - FPR$, achieving a **93.94% Photo recall** with only **8.79%** false positives.
+  - **Binary Grouping for Photo vs. Non-Photo:** **93.04% binary accuracy** and **0.9758 ROC-AUC**.
+  - **Optimal Youden Threshold $\theta = 0.2301$:** Maximizes $\text{TPR} - \text{FPR}$, achieving a **93.94% Photo recall** with only **8.79%** false positives.
 
 ---
 
-### Deliverable 2 : Photographic Denoising via Autoencoder & U-Net (`Livrable 2.ipynb`)
+### Deliverable 2 : Photographic Denoising via Autoencoder & U-Net
 - **Objective:** Clean scanning noise from photographs retained in Stage 1 without blurring fine structural details needed for scene understanding.
-- **Data & Patch Augmentation:** 148 reference photographs center-cropped to $256 \times 256$, extracting **16 random $128 \times 128$ patches** per training image with random horizontal flips (~1,648 training patches) and controlled Gaussian noise injection.
+- **Data & Patch Augmentation:** 148 reference photographs center-cropped to $256 \times 256$, extracting 16 random $128 \times 128$ patches per training image with random horizontal flips for 1,648 training patches and controlled Gaussian noise injection.
 - **Architecture Comparison:**
   1. **Baseline Convolutional Autoencoder** trained with **MSE** loss.
-  2. **Fully Convolutional U-Net** with **skip connections** (encoder/decoder concatenation), `Conv2DTranspose`, and `BatchNormalization`, trained with a **combined $\text{MSE} + \text{SSIM}$ loss**.
-- **Results:** The U-Net trained with $\text{MSE} + \text{SSIM}$ significantly outperforms the standard autoencoder on both **PSNR** and **SSIM**, eliminating blur and preserving fine textures (foliage, facial features, sharp contours).
+  2. **Fully Convolutional U-Net** with **skip connections** concatenating encoder and decoder feature maps, `Conv2DTranspose`, and `BatchNormalization`, trained with a **combined $\text{MSE} + \text{SSIM}$ loss**.
+- **Results:** The U-Net trained with $\text{MSE} + \text{SSIM}$ significantly outperforms the standard autoencoder on both **PSNR** and **SSIM**, eliminating blur and preserving fine textures such as foliage, facial features, and sharp contours.
 
 ---
 
-### Deliverable 3 : Automated Image Captioning (`Livrable 3.ipynb`)
+### Deliverable 3 : Automated Image Captioning
 - **Objective:** Generate a descriptive natural-language caption for each denoised photograph.
-- **MS-COCO (`train2014`) Pipeline:**
-  1. Filtering via Stage 1 classifier ($\theta = 0.2301$).
-  2. Denoising at $299 \times 299$ via the Stage 2 U-Net (with symmetric multiple-of-4 padding).
-  3. Visual feature extraction using **InceptionV3** (pretrained on ImageNet, `include_top=False`), yielding an $8 \times 8 \times 2048$ spatial grid reshaped to **$(64, 2048)$** (64 spatial regions described by 2,048 features).
-  4. Tokenization of COCO captions wrapped with `<start>` and `<end>`, restricted to the **5,000 most frequent words** (`VOCAB_SIZE = 5001`, `max_length = 52`).
+- **MS-COCO Pipeline:**
+  1. Filtering via the Stage 1 classifier at threshold $\theta = 0.2301$.
+  2. Denoising at $299 \times 299$ via the Stage 2 U-Net with symmetric padding.
+  3. Visual feature extraction using **InceptionV3** pretrained on ImageNet without its classification head, yielding an $8 \times 8 \times 2048$ spatial grid reshaped to 64 spatial regions of 2,048 features.
+  4. Tokenization of COCO captions wrapped with `<start>` and `<end>` tokens, restricted to the 5,000 most frequent words with a maximum sequence length of 52.
 - **GRU vs. LSTM Decoder with Bahdanau Attention:**
-  - `CNN_Encoder`: Projects $(64, 2048)$ features into a `256`-dimensional embedding space.
+  - `CNN_Encoder`: Projects the 64 spatial regions into a 256-dimensional embedding space.
   - `BahdanauAttention`: Computes dynamic spatial attention weights over the 64 image regions at each decoding step.
-  - `AttentionDecoder` (`units = 512`): Benchmarked with both **GRU** and **LSTM** recurrent cells over 20 epochs:
+  - `AttentionDecoder`: Benchmarked at 512 hidden units with both **GRU** and **LSTM** recurrent cells over 20 epochs:
 
 | Metric | GRU Model | LSTM Model |
 | :--- | :---: | :---: |
@@ -91,17 +91,17 @@ Because scanned document batches contain a mix of photographs, text pages, techn
 | **BLEU Score** | 0.052 | **0.064** |
 | **CIDEr Score** | 0.728 | **0.750** |
 
-The **LSTM** decoder achieved the highest **CIDEr (0.750)** and **BLEU** scores and was selected for production, complete with word-by-word spatial attention map visualization.
+The **LSTM** decoder achieved the highest **CIDEr score of 0.750** and **BLEU score of 0.064** and was selected for production, complete with word-by-word spatial attention map visualization.
 
 ---
 
-## 3. Web Application & Cloud Deployment (`web_app/`)
+## 3. Web Application & Cloud Deployment
 
-The interactive **Flask** web application (`Legenda`) lets users drag-and-drop any image (`JPG`, `PNG`, `WEBP`) and watch each stage of the neural pipeline execute in real time via an **HTTP NDJSON stream (`/api/predict-stream`)**:
+The interactive **Flask** web application lets users drag and drop any image in JPG, PNG, or WEBP format and watch each stage of the neural pipeline execute in real time via an **HTTP NDJSON stream** on `/api/predict-stream`:
 1. `validation` : Image integrity check.
-2. `classification` : CNN Photo probability & Youden threshold check (stops early if classified as non-photo).
+2. `classification` : CNN Photo probability and Youden threshold check, stopping early if the document is classified as non-photo.
 3. `denoising` : Live preview of the U-Net denoised photograph.
-4. `caption` : Final caption generated by InceptionV3 + Bahdanau Attention + LSTM.
+4. `caption` : Final caption generated by InceptionV3, Bahdanau Attention, and the LSTM decoder.
 
 ### Cloud Architecture
-Containerized with **Docker** (`Keras 3` + `PyTorch CPU` backend + `Gunicorn`) and deployed on **Azure Container Apps** with scale-to-zero and **Cloudflare** DNS/TLS termination at [https://leyenda.darylbdr.tech](https://leyenda.darylbdr.tech).
+Containerized with **Docker** using Keras 3, a PyTorch CPU backend, and Gunicorn, and deployed on **Azure Container Apps** with scale-to-zero and **Cloudflare** DNS and TLS termination at [https://leyenda.darylbdr.tech](https://leyenda.darylbdr.tech).

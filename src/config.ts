@@ -1,9 +1,9 @@
 export const SITE = {
     website: "https://darylbdr.github.io",
-    title: "Daryl BOULOU | AI & Data Science Portfolio",
+    title: "Boul'Og",
     description: "Hi, this is Daryl BOULOU, student in AI and Data Science. Documenting my learning notes, AI projects, and sharing my professional experiences.",
-    tags: ["AI", "Data Science", "Deep Learning", "Machine Learning", "Local LLMs", "Portfolio", "Astro", "Daryl BOULOU"],
-    ogImage: "/images/leyenda-cover.png",
+    tags: ["AI", "Data Science", "Deep Learning", "Machine Learning", "Local LLMs", "Fine-Tuning", "Portfolio", "Astro", "Daryl BOULOU"],
+    ogImage: "/images/cameroonian-llm-cover.png",
     logo: "logo",
     logoText: "Boul'Og",
     lang: "en",
@@ -16,11 +16,11 @@ export const SITE = {
 
 export const ME = {
     name: "Daryl BOULOU",
-    profession: "AI & Data Science Student | Machine Learning & Software Engineering",
+    profession: "AI & Data Science Student",
     profileImage: "avatar.png",
     profileFacts: [
         {
-            value: 4,
+            value: 5,
             description: "AI & ML Projects"
         },
         {
@@ -38,9 +38,9 @@ export const ME = {
         resumeDoc: "resume.pdf",
     },
     aboutMe: "Hi, this is Daryl BOULOU, an engineering student in Artificial Intelligence and Data Science at CESI. " +
-        "I specialize in building end-to-end AI systems, from implementing neural networks from scratch and training computer vision pipelines (CNNs, U-Net, Attention LSTMs) " +
-        "to designing grounded tool-calling agents powered by local LLMs (Ollama, Gemma 4). " +
-        "I use this portfolio and blog (Boul'Og) to document my learning notes, showcase my projects, and share my professional experiences.",
+        "I specialize in building end-to-end AI systems, from fine-tuning large language models and implementing neural networks from scratch " +
+        "to training computer vision pipelines and designing tool-calling agents powered by local LLMs. " +
+        "I use this portfolio and blog to document my technical notes, showcase my projects, and share my engineering experiences.",
 }
 
 export const SOCIALS = [

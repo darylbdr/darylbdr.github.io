@@ -7,22 +7,22 @@ interface HardSkill {
 const hardSkills: HardSkill[] = [
   {
     name: "Deep Learning & Computer Vision",
-    description: "PyTorch, Keras 3, CNN, Bahdanau Attention & LSTM decoders",
+    description: "PyTorch, Keras 3, CNN, U-Net denoising, Bahdanau Attention & LSTM decoders",
     icon: "brain-fill"
   },
   {
-    name: "Local LLMs & Agentic AI",
-    description: "Building grounded tool-calling agents with Ollama, function schemas, prompt engineering, and GitLab/Stockfish integrations",
+    name: "LLM Fine-Tuning & Agentic AI",
+    description: "Hybrid CPT and SFT with QLoRA on Hugging Face, plus tool-calling agents using Ollama, Stockfish, and GitLab",
     icon: "robot-fill"
   },
   {
     name: "Python Backend & MLOps",
-    description: "FastAPI, Flask, Server-Sent Events streaming, Docker multi-stage builds, Azure Container Apps & CI/CD",
+    description: "FastAPI, Flask, Server-Sent Events streaming, Docker, Azure Container Apps & CI/CD",
     icon: "code-box-fill"
   },
   {
     name: "React, TypeScript & QA Automation",
-    description: "Interactive web applications with React, TypeScript, Vite, Tailwind CSS, and end-to-end testing with Cypress",
+    description: "Interactive web applications with React, TypeScript, Vite and end-to-end testing with Cypress",
     icon: "react"
   }
 ];
