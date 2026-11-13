@@ -1,6 +1,6 @@
 ---
-title: "CameroonianAI : Hybrid CPT & SFT Fine-Tuning for Camfranglais"
-summary: "Adapting the 12B Mistral-Nemo-Instruct-2407 language model to Camfranglais through a two-stage Continued Pre-Training and Supervised Fine-Tuning pipeline with QLoRA, backed by a custom linguistic scoring algorithm over 111,064 YouTube comments."
+title: "CameroonianLLM : Hybrid CPT & SFT Fine-Tuning for Camfranglais"
+summary: "Adapting the 12B Mistral-Nemo-Instruct-2407 language model to Camfranglais through a two-stage Continued Pre-Training and Supervised Fine-Tuning pipeline with QLoRA, backed by a custom linguistic scoring algorithm over 163,283 YouTube comments and pseudonymized WhatsApp exports."
 tags:
     - Fine-Tuning
     - QLoRA & PEFT
@@ -9,7 +9,7 @@ tags:
     - Hugging Face
     - PyTorch
 startDate: 2026-10-20
-endDate: 2026-11-08
+endDate: 2026-11-12
 url: "https://huggingface.co/Cmr237/Camfranglais"
 cover: "./images/cameroonian-llm/cover.png"
 ogImage: "/images/cameroonian-llm-cover.png"
@@ -17,35 +17,35 @@ ogImage: "/images/cameroonian-llm-cover.png"
 
 ## Overview
 
-**CameroonianAI** adapts the 12-billion-parameter `Mistral-Nemo-Instruct-2407` model to **Camfranglais**, a contact language born in Cameroon that blends French syntax with English, french and Cameroonian Pidgin.
+**CameroonianLLM** adapts the 12-billion-parameter `Mistral-Nemo-Instruct-2407` model to **Camfranglais**, a contact language born in Cameroon that blends French syntax with English, Cameroonian Pidgin, and local languages such as Duala, Ewondo, and Bamileke.
 
-Standard large language models fail on low-resource urban vernaculars because they either revert to formal academic French or hallucinate incoherent slang. To solve this, I built an end-to-end data collection, linguistic filtering, and two-stage hybrid fine-tuning pipeline that separates vocabulary acquisition from conversational instruction following.
+Standard large language models fail on low-resource urban vernaculars because they either revert to formal academic French or hallucinate incoherent slang. To solve this, our team built an end-to-end data collection, linguistic filtering, and two-stage hybrid fine-tuning pipeline that separates vocabulary acquisition from conversational instruction following.
 
 - **Hugging Face Model & GGUF Weights:** [huggingface.co/Cmr237/Camfranglais](https://huggingface.co/Cmr237/Camfranglais)
-- **CPT Corpus — 14,302 texts:** [huggingface.co/datasets/Cmr237/camfranglais-corpus-cpt](https://huggingface.co/datasets/Cmr237/camfranglais-corpus-cpt)
-- **SFT Corpus — 1,200 dialogues:** [huggingface.co/datasets/Cmr237/camfranglais-corpus-sft](https://huggingface.co/datasets/Cmr237/camfranglais-corpus-sft)
+- **CPT Corpus — 23,224 texts:** [huggingface.co/datasets/Cmr237/camfranglais-corpus-cpt](https://huggingface.co/datasets/Cmr237/camfranglais-corpus-cpt)
+- **SFT Corpus — 2,671 dialogues:** [huggingface.co/datasets/Cmr237/camfranglais-corpus-sft](https://huggingface.co/datasets/Cmr237/camfranglais-corpus-sft)
 - **GitHub Repository:** [github.com/SodaiCMR/CameroonianAI](https://github.com/SodaiCMR/CameroonianAI)
 
 ---
 
 ## End-to-End Pipeline Architecture
 
-Data ingestion, linguistic filtering, dataset assembly, and evaluation run locally on CPU via modular Python scripts in `src/data_pipeline/`, while QLoRA training executes on an NVIDIA L4 GPU with 22.5 GB of VRAM.
+Data ingestion, pseudonymization, linguistic filtering, dataset assembly, and evaluation run locally on CPU via modular Python scripts in `src/data_pipeline/`, while QLoRA training executes on an NVIDIA L4 GPU with 22.5 GB of VRAM.
 
 ```text
 +-------------------------------------------------------------------------+
 |                        Local CPU Data Pipeline                          |
 |                                                                         |
-|  1. YouTube Data API v3 Scraper (src/data_pipeline/scraper.py)          |
-|     Extracts 111,064 raw comments and Parent -> Child reply threads     |
+|  1. Multi-Source Ingestion (scraper.py, whatsapp.py, conv.json)         |
+|     163,283 YouTube comments, pseudonymized WhatsApp chats & greetings  |
 |                                  |                                      |
 |                                  v                                      |
 |  2. Linguistic Scorer S (src/data_pipeline/scorer.py)                   |
-|     Scores texts using 645 Wiktionary markers and French syntax anchors |
+|     Scores texts using 480 Wiktionary markers and French syntax anchors |
 |                                  |                                      |
 |                                  v                                      |
 |  3. Dataset Builder (src/data_pipeline/builder.py)                      |
-|     14,302 CPT texts  |  1,080 SFT train dialogues  |  120 test         |
+|     23,224 CPT texts  |  2,404 SFT train dialogues  |  267 test         |
 +-------------------------------------------------------------------------+
                                    |
                                    | Push to Hugging Face Hub
@@ -69,7 +69,7 @@ Data ingestion, linguistic filtering, dataset assembly, and evaluation run local
 
 ## Linguistic Filtering and Mathematical Scoring
 
-Scraping Cameroonian YouTube channels yields a noisy mix of standard French, pure English, and Nigerian or Cameroonian Pidgin. To isolate authentic Camfranglais without penalizing longer sentences, `src/data_pipeline/scorer.py` evaluates every comment of $N$ words using a composite score $S$:
+Scraping Cameroonian YouTube channels and aggregating WhatsApp exports yields a noisy mix of standard French, pure English, and Nigerian or Cameroonian Pidgin. To isolate authentic Camfranglais without penalizing longer sentences, `src/data_pipeline/scorer.py` evaluates every text of $N$ words using a composite score $S$:
 
 $$
 S = \mathbb{I}(N \ge 6) \times D_{\text{cam}} \times P_{\text{matrice}}
@@ -80,14 +80,14 @@ $$
    $$
    D_{\text{cam}} = \frac{1}{N} \sum_{i=1}^{N} w_i
    $$
-   Built from the Wiktionary Camfranglais lexicon in `config/lexicon.json`, assigning a weight $w_i = 2.0$ to 486 exclusive Camfranglais markers and $w_i = 1.0$ to 159 secondary markers, with fuzzy root matching via `SequenceMatcher` at a 0.84 ratio threshold to handle spelling variations.
+   Built from the Wiktionary Camfranglais lexicon in `config/lexicon.json`, assigning a weight $w_i = 2.0$ to 321 exclusive Camfranglais markers and $w_i = 1.0$ to 159 secondary markers, with fuzzy root matching via `SequenceMatcher` at a 0.84 ratio threshold to handle spelling variations.
 3. **Syntactic Matrix Ratio $P_{\text{matrice}}$:**
    $$
    P_{\text{matrice}} = \frac{C_{\text{fr}}}{C_{\text{fr}} + C_{\text{en/pid}} + \epsilon}
    $$
    Measures the proportion of French function words relative to English and Pidgin anchors, ensuring that retained sentences preserve a Franco-Cameroonian grammatical backbone.
 
-When building SFT conversation pairs from `Parent -> Child` comment threads, only the assistant reply must exceed the high-confidence threshold $\tau_{\text{haut}} = 0.06$. Allowing the user prompt to remain in standard French or Camfranglais teaches the model to respond naturally in Camfranglais regardless of how the user phrases their prompt.
+When building SFT conversation pairs from `Parent -> Child` comment threads and WhatsApp exchanges, only the assistant reply must exceed the high-confidence threshold $\tau_{\text{haut}} = 0.06$. Allowing the user prompt to remain in standard French or Camfranglais teaches the model to respond naturally in Camfranglais regardless of how the user phrases their prompt.
 
 ---
 
@@ -97,26 +97,26 @@ Training relies on rank-stabilized QLoRA in `bfloat16` precision with rank $r = 
 
 | Stage | Dataset | Learning Rate | Objective |
 | :--- | :--- | :---: | :--- |
-| **Phase 1: Continued Pre-Training** | 14,302 raw texts | `1e-4` | Learn Cameroonian vocabulary, spelling variations, and idioms through next-token prediction. |
-| **Phase 2: Supervised Fine-Tuning** | 1,080 dialogues | `5e-5` | Shape the same LoRA adapters into a helpful conversational assistant using `train_on_responses_only`. |
+| **Phase 1: Continued Pre-Training** | 23,224 raw texts | `1e-4` | Learn Cameroonian vocabulary, spelling variations, and idioms through next-token prediction. |
+| **Phase 2: Supervised Fine-Tuning** | 2,404 dialogues | `5e-5` | Shape the same LoRA adapters into a helpful conversational assistant using `train_on_responses_only`. |
 
-Using CPT alone causes the model to behave like an unprompted YouTube comment generator, whereas SFT alone lacks lexical depth. Chaining both phases on the same adapters combines rich vernacular expression with reliable instruction following.
+Using CPT alone causes the model to behave like an unprompted comment or message thread, whereas SFT alone lacks lexical depth. Chaining both phases on the same adapters combines rich vernacular expression with reliable instruction following.
 
 ---
 
-## Evaluation Results on the 120-Dialogue Test Set
+## Evaluation Results on the 267-Dialogue Test Set
 
 The model was evaluated across three complementary axes in `src/data_pipeline/evaluator.py`: fluency via perplexity, linguistic fidelity via the adherence score $S$, and semantic relevance via multilingual sentence embeddings using `paraphrase-multilingual-MiniLM-L12-v2`.
 
 | Category | Metric | Value | Analysis |
 | :--- | :--- | :---: | :--- |
-| **Fluency** | Eval Loss | `3.1847` | Cross-entropy loss across the 120 held-out test dialogues. |
-| **Fluency** | Perplexity | **`24.16`** | Significant drop from the initial baseline of `29.68` after expanding the CPT corpus. |
-| **Camfranglais Adherence** | Model Mean Score $S$ | **`0.1435`** | Closely matches the human reference mean of `0.1731`, with an absolute gap of only `0.0297`. |
-| **Camfranglais Adherence** | Active Camfranglais Rate | **`73.3%`** | Nearly three quarters of generated replies actively incorporate verified lexicon markers. |
-| **Semantic Relevance** | Prompt Cosine Similarity | **`0.3968`** | Strong topical alignment with user questions, reaching up to `0.9074`. |
-| **Semantic Relevance** | Reference Cosine Similarity | **`0.3382`** | Semantic proximity to ground-truth human replies, reaching up to `0.8275`. |
+| **Fluency** | Eval Loss | `3.7362` | Cross-entropy loss across the 267 held-out test dialogues, including freer real-world WhatsApp pairs. |
+| **Fluency** | Perplexity | **`41.94`** | Measured across the full 267-dialogue evaluation split. |
+| **Camfranglais Adherence** | Model Mean Score $S$ | **`0.1789`** | Closely matches the human reference mean of `0.1551`, with a mean absolute gap of only `0.0237`. |
+| **Camfranglais Adherence** | Active Camfranglais Rate | **`81.27%`** | Over four-fifths of generated replies actively incorporate verified lexicon markers. |
+| **Semantic Relevance** | Prompt Cosine Similarity | **`0.3891`** | Strong topical alignment with user questions, reaching up to `0.8810`. |
+| **Semantic Relevance** | Reference Cosine Similarity | **`0.3309`** | Semantic proximity to ground-truth human replies, reaching up to `0.7615`. |
 
 ![Camfranglais Adherence Score Distribution](./images/cameroonian-llm/adherence_distribution.png)
 
-Between $S = 0.1$ and $S = 0.5$, the fine-tuned model closely mirrors the human distribution, sharing a common peak around $S = 0.20$ which corresponds to natural French sentences punctuated by one to three Camfranglais terms.
+Across the 267 test dialogues, the fine-tuned model closely mirrors the human score distribution, with 81.27% of generated replies actively incorporating verified Camfranglais markers and only 18.73% falling at $S = 0.0$ in standard French.
